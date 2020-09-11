@@ -1,7 +1,3 @@
-#LIST OF BUGS:
-#-belom sempet test itu value move bakal None lagi ato ngga
-#-in some occasions tbtb AI nya ga jalan
-
 import random
 import sys
 
