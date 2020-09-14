@@ -1,5 +1,8 @@
+#! python3
+
 import random
 import sys
+import time
 
 def printboard(B):
     #untuk menampilkan board dalam layar.
@@ -27,11 +30,10 @@ def choose():
 def firstmove():
     #untuk menentukan siapa yang jalan duluan, diacak menggunakan random.randint.
     if random.randint(1, 2) == 1:
-        return 'Saya'
+        return 'tAI'
     else:
         return name
-    #return 'Saya' #debug mode, human auto jalan duluan
-    
+
 def wincond(b, c):
     #memberikan winning condition
     return ( \
@@ -107,7 +109,6 @@ def commove(boardd, comchar):
         if freespace(copy, i):
             turnmove(copy, comchar, i)
             if wincond(copy, comchar):
-                #print('cond 1 [WIN] executed')
                 return i
             
     #cond 2: bisa ngalangin
@@ -116,35 +117,29 @@ def commove(boardd, comchar):
         if freespace(copy, i):
             turnmove(copy, playerchar, i)
             if wincond(copy, playerchar):
-                #print('cond 2 [BLOCK] executed')
                 return i
             
     #cond 3: ambil tengah
     copy = copyboardforcom(boardd)
     if freespace(boardd, 5):
-        #print('cond 3 [TAKECENTER] executed')
         return 5
     
     if board[5] == comchar:
         #cond 4: setcond 1a, CC jauh.
         if setcond1a(copy, playerchar):
-            #print('cond 4 [CC JAUH] executed')
             return moveEdge
             
         #cond 5: setcond 2, EE deket.
         elif freespace(boardd, 1) and freespace(boardd, 3)\
         and freespace(boardd, 7) and freespace(boardd, 9):
-            #print('cond 5 [EE DEKET] executed')
             return setcond2()
           
         #cond 6: setcond 3, CE jauh.
         elif 1 not in SC3:
-            #print('cond 6 [CE JAUH] executed')
             SC3.append(1)
             return setcond3()
         
         else: #just in case.
-            #print('cond RANDOM executed')
             return moveAll
           
     elif board[5] == playerchar:
@@ -152,25 +147,20 @@ def commove(boardd, comchar):
         if setcond1b(copy, playerchar):
             if freespace(boardd, 1) or freespace(boardd, 3)\
             or freespace(boardd, 7) or freespace(boardd, 9):
-                #print('cond 7c [NC JAUH TO AI CORNER] executed')
                 return moveCorner
             else:
-                #print('cond 7e [NC JAUH TO AI CORNER] executed')
                 return moveEdge
         
         #cond 2ndtoLAST: ambil corner acak
         elif freespace(boardd, 1) or freespace(boardd, 3)\
         or freespace(boardd, 7) or freespace(boardd, 9):
-            #print('cond 2ndtoLAST executed')
             return moveCorner
     
         #cond LAST: ambil samping acak
         else:
-            #print('cond LAST executed')
             return moveEdge
     
     else:
-        #print('cond RANDOM executed')
         return moveAll
 
 def fullboard(boardd):
@@ -180,7 +170,7 @@ def fullboard(boardd):
             return False
     return True
 
-#AI set conditions beginning
+#AI set conditions
 def setcond1a(b, c): #CC jauh. set condition = diagonal
     return ( \
     (b[1] == c and b[9] == c) or \
@@ -194,41 +184,41 @@ def setcond1b(b,c): #NC jauh ke corner kita. set condition = diagonal
     (b[5] == c and b[3] == c))
 
 def setcond2(): #EE deket, go to corner yang diapit. set condition: 4 cond.
-    if board[4] == playerchar and board[8] == playerchar:
-        return 7
-    elif board[6] == playerchar and board[8] == playerchar:
-        return 9
-    elif board[4] == playerchar and board[2] == playerchar:
+    if board[4] == playerchar and board[2] == playerchar:
         return 1
     elif board[6] == playerchar and board[2] == playerchar:
         return 3
+    elif board[4] == playerchar and board[8] == playerchar:
+        return 7
+    elif board[6] == playerchar and board[8] == playerchar:
+        return 9
     else:
         return randommove(board, [1, 3, 7, 9])
 
 def setcond3(): #CE jauh, go to C lowest distance dari C ke E nya dia. set condition: 8 cond.
-    if board[1] == playerchar and board[6] == playerchar:
-        return 3
-    elif board[1] == playerchar and board[8] == playerchar:
-        return 7
-    elif board[3] == playerchar and board[4] == playerchar:
+    if board[3] == playerchar and board[4] == playerchar\
+    or board[7] == playerchar and board[2] == playerchar:
         return 1
-    elif board[3] == playerchar and board[8] == playerchar:
-        return 9
-    elif board[7] == playerchar and board[2] == playerchar:
-        return 1
-    elif board[7] == playerchar and board[6] == playerchar:
-        return 9
-    elif board[9] == playerchar and board[2] == playerchar:
+    elif board[1] == playerchar and board[6] == playerchar\
+    or board[9] == playerchar and board[2] == playerchar:
         return 3
-    elif board[9] == playerchar and board[4] == playerchar:
+    elif board[9] == playerchar and board[4] == playerchar\
+    or board[1] == playerchar and board[8] == playerchar:
         return 7
+    elif board[3] == playerchar and board[8] == playerchar\
+    or board[7] == playerchar and board[6] == playerchar:
+        return 9
     else:
         return randommove(board, [1, 3, 7, 9])
     
 print('Selamat datang dalam permainan Tic-Tac-Toe.')
-name = str(input('Masukkan nama kamu: '))
-print('Halo, ' + name + '. Senang bertemu denganmu.')
+print('Aku tAI, AI Tic-Tac-Toe yang tidak pernah akan kalah.')
+name = str(input('Siapa namamu?: '))
+print('Halo, %s. Senang bertemu denganmu.' % (name))
 print('Untuk tutorial bermain, ketik "T".')
+comScore = 0
+playerScore = 0
+tieScore = 0
            
 while True:
     SC3 = [] #special trigger for setcond3 supaya keexecute cuman sekali
@@ -248,35 +238,40 @@ while True:
                 
                 if wincond(board, playerchar):
                     printboard(board)
-                    print('Selamat, ' + name + '! Kamu menang.')
-                    print('Main lagi gak?')
+                    playerScore += 1
+                    print('Selamat, %s! Kamu menang. Curang ya?' % (name))
+                    print('Skor: tAI %s - %s %s (%s seri)' % (comScore, playerScore, name, tieScore))
                     break
                 
                 else:
                     if fullboard(board):
                         printboard(board)
+                        tieScore += 1
                         print('Wah, seri nih kita!')
-                        print('Main lagi gak?')
+                        print('Skor: tAI %s - %s %s (%s seri)' % (comScore, playerScore, name, tieScore))
                         break
                         
                     else:
-                        turn = 'Saya'
+                        turn = 'tAI'
             
             else:
+                time.sleep(0.1)
                 move = commove(board, comchar)
                 turnmove(board, comchar, move)
                 
                 if wincond(board, comchar):
                     printboard(board)
+                    comScore += 1
                     print('Haha! Kamu belum bisa mengalahkanku.')
-                    print('Main lagi gak?')
+                    print('Skor: tAI %s - %s %s (%s seri)' % (comScore, playerScore, name, tieScore))
                     break
                 
                 else:
                     if fullboard(board):
                         printboard(board)
+                        tieScore +=1
                         print('Wah, seri nih kita!')
-                        print('Main lagi gak?')
+                        print('Skor: tAI %s - %s %s (%s seri)' % (comScore, playerScore, name, tieScore))
                         break
                         
                     else:
@@ -304,5 +299,5 @@ while True:
     else:
         print('Mohon masukkan kode yang benar.')
         
-print('Terima kasih telah bermain Tic-Tac-Toe, ' + name + '. Semoga harimu menyenangkan.')
+print('Terima kasih telah bermain Tic-Tac-Toe, %s. Semoga harimu menyenangkan.' % (name))
 sys.exit()
