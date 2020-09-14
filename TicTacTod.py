@@ -171,6 +171,12 @@ def fullboard(boardd):
     return True
 
 #AI set conditions
+def setcondfree(boardd, move):
+    if freespace(boardd, move):
+        return move
+    else:
+        return randommove(board, [1, 3, 7, 9])
+    
 def setcond1a(b, c): #CC jauh. set condition = diagonal
     return ( \
     (b[1] == c and b[9] == c) or \
@@ -185,29 +191,29 @@ def setcond1b(b,c): #NC jauh ke corner kita. set condition = diagonal
 
 def setcond2(): #EE deket, go to corner yang diapit. set condition: 4 cond.
     if board[4] == playerchar and board[2] == playerchar:
-        return 1
+        return setcondfree(board, 1)
     elif board[6] == playerchar and board[2] == playerchar:
-        return 3
+        return setcondfree(board, 3)
     elif board[4] == playerchar and board[8] == playerchar:
-        return 7
+        return setcondfree(board, 7)
     elif board[6] == playerchar and board[8] == playerchar:
-        return 9
+        return setcondfree(board, 9)
     else:
         return randommove(board, [1, 3, 7, 9])
 
 def setcond3(): #CE jauh, go to C lowest distance dari C ke E nya dia. set condition: 8 cond.
     if board[3] == playerchar and board[4] == playerchar\
     or board[7] == playerchar and board[2] == playerchar:
-        return 1
+        return setcondfree(board, 1)
     elif board[1] == playerchar and board[6] == playerchar\
     or board[9] == playerchar and board[2] == playerchar:
-        return 3
+        return setcondfree(board, 3)
     elif board[9] == playerchar and board[4] == playerchar\
     or board[1] == playerchar and board[8] == playerchar:
-        return 7
+        return setcondfree(board, 7)
     elif board[3] == playerchar and board[8] == playerchar\
     or board[7] == playerchar and board[6] == playerchar:
-        return 9
+        return setcondfree(board, 9)
     else:
         return randommove(board, [1, 3, 7, 9])
     
